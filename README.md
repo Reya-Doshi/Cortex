@@ -1,8 +1,12 @@
 # Cortex — Autonomous Multi-Agent Data Investigation Platform
 
-Cortex is an autonomous, production-grade data investigation platform. It enables users to upload multiple CSV datasets, ask natural language questions, and witness a collaborative agent team profile the data, plan a Directed Acyclic Graph (DAG) of transformations, run python aggregation routines concurrently, and explain findings with interactive Recharts visualizations.
+Cortex is an autonomous, production-grade data investigation platform. It enables users to upload CSV datasets, ask natural language questions, and witness a collaborative agent team profile the data, plan a Directed Acyclic Graph (DAG) of transformations, run python aggregation routines concurrently, and explain findings with interactive Recharts visualizations.
 
-This project is built to demonstrate high-quality software engineering, modern React/FastAPI full-stack development, multi-agent LLM orchestration, concurrent graph execution, and professional system design.
+### 🌟 Key Platform Features:
+- **True Parallel DAG Executor:** Runs independent analysis steps concurrently using a dependency-aware ThreadPoolExecutor.
+- **Strict Intent Resolution & Semantic Matching:** Validates dataset columns beforehand and maps queries to precise pandas operations (e.g. age binning, department means) with zero silent column replacements.
+- **Zero State Leakage Architecture:** Creates isolated request-scoped execution contexts namespaced by unique execution IDs.
+- **Mocked Testing Engine:** 100% offline pytest suite verifying planner intent resolution and error bounds.
 
 ---
 
@@ -124,14 +128,32 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ---
 
 ## 🐳 Docker Deployment
-Run the complete multi-agent pipeline containerized in a single command:
-```bash
-docker-compose up --build
-```
-This builds:
-- **`backend` service** (FastAPI) on port `8000`.
-- **`frontend` service** (Vite Dev Server) on port `5173`.
-- Mounts local directory volumes for persistent upload files and investigation run history.
+
+To deploy Cortex in a containerized environment (e.g. AWS EC2, DigitalOcean VM, or local Docker):
+
+### Next Steps to Deploy:
+1. **Clone the GitHub repository:**
+   ```bash
+   git clone https://github.com/Reya-Doshi/Cortex.git
+   cd Cortex
+   ```
+
+2. **Configure your API Key:**
+   Create a `.env` file at the root of the project with your Gemini Developer API Key:
+   ```bash
+   echo "GEMINI_API_KEY=your_actual_gemini_api_key" > .env
+   ```
+
+3. **Start the containers:**
+   Deploy the full stack in detached mode:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+### Services Built:
+- **`backend` service** (FastAPI) running on port `8000`.
+- **`frontend` service** (Vite) running on port `5173`.
+- Local directories `./uploads` and `./outputs` are mounted to persistent Docker volumes to retain dataset uploads and investigation runs history upon container updates.
 
 ---
 
