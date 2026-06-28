@@ -17,6 +17,8 @@ interface HistorySidebarProps {
   onSelectRun: (runId: string) => void;
 }
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
+
 export const HistorySidebar: React.FC<HistorySidebarProps> = ({
   isOpen,
   onClose,
@@ -36,7 +38,7 @@ export const HistorySidebar: React.FC<HistorySidebarProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/history");
+      const response = await fetch(`${BACKEND_URL}/history`);
       if (!response.ok) throw new Error("Failed to load history list.");
       const data = await response.json();
       setHistoryList(data.history || []);

@@ -19,6 +19,8 @@ interface SidebarProps {
   onUploadSuccess: (file: UploadedFile) => void;
 }
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
+
 export const Sidebar: React.FC<SidebarProps> = ({
   files,
   selectedFile,
@@ -40,7 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     formData.append("file", file);
 
     try {
-      const response = await fetch("/upload", {
+      const response = await fetch(`${BACKEND_URL}/upload`, {
         method: "POST",
         body: formData,
       });

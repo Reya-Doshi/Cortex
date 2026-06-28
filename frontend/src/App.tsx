@@ -24,6 +24,8 @@ interface UploadedFile {
   health_score?: number;
 }
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
+
 export default function App() {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
@@ -112,7 +114,7 @@ export default function App() {
   const loadProfile = async (filePath: string) => {
     setIsLoadingProfile(true);
     try {
-      const res = await fetch("/profile", {
+      const res = await fetch(`${BACKEND_URL}/profile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ file_path: filePath }),
@@ -165,7 +167,7 @@ export default function App() {
       addLog("[Planner] Triggering Planner Agent using Gemini 2.5 Flash...", "Planning");
       addLog(`[Planner] Requesting structured JSON plan for: "${activeQuery}"`, "Planning");
       
-      const response = await fetch("/analyze", {
+      const response = await fetch(`${BACKEND_URL}/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -270,7 +272,7 @@ export default function App() {
     await delay(500);
 
     try {
-      const res = await fetch(`/history/${runId}`);
+      const res = await fetch(`${BACKEND_URL}/history/${runId}`);
       if (!res.ok) throw new Error("Could not fetch past run details from server.");
       const data = await res.json();
       
@@ -293,7 +295,7 @@ export default function App() {
   const handleExportPDF = () => {
     if (!currentRunId) return;
     addLog(`[Export] Compiling PDF report for run ID: ${currentRunId}...`, "System");
-    window.open(`/report/${currentRunId}`, "_blank");
+    window.open(`${BACKEND_URL}/report/${currentRunId}`, "_blank");
   };
 
   const renderInlineChart = () => {
