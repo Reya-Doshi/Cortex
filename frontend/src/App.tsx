@@ -106,6 +106,9 @@ export default function App() {
   useEffect(() => {
     if (selectedFile) {
       loadProfile(selectedFile.file_path);
+      setExecutionResult(null);
+      setLogs([]);
+      setRunningTimings([]);
     } else {
       setSelectedFileProfile(null);
     }
