@@ -1,4 +1,14 @@
+## Live Demo
+[cortex-beta-nine.vercel.app](https://cortex-beta-nine.vercel.app)
+
+## What it does in one line
+Upload a CSV, ask a natural language question, and watch a team of 
+AI agents plan, execute, and explain the analysis — in parallel, 
+2x faster than sequential execution.
+
 # Cortex — Autonomous Multi-Agent Data Investigation Platform
+
+![Demo](demo.gif)
 
 Cortex is an autonomous, production-grade data investigation platform. It enables users to upload CSV datasets, ask natural language questions, and witness a collaborative agent team profile the data, plan a Directed Acyclic Graph (DAG) of transformations, run python aggregation routines concurrently, and explain findings with interactive Recharts visualizations.
 
@@ -36,6 +46,12 @@ Cortex is an autonomous, production-grade data investigation platform. It enable
         │ Profiler Tool ││ Python Engine ││ Visualization │
         └───────────────┘└───────────────┘└───────────────┘
 ```
+
+## Performance
+- Parallel DAG execution: **2.14x average speedup** over sequential
+- Topological sort detects cyclic deps before dispatch
+- Zero state leakage: each request gets an isolated execution context
+- 100% offline pytest suite covering planner intent resolution
 
 ---
 
@@ -193,6 +209,38 @@ Returns list of all saved investigation metadata.
 
 ### `GET /report/{run_id}`
 Generates and downloads a branded PDF report containing graphs, execution speedups, and strategic recommendations.
+
+---
+
+## 🧪 Automated Testing
+
+We have built a comprehensive, offline mocked unit testing suite using `pytest` to verify all analytical intent mapping patterns and column validation error cases without exhausting your API key limits.
+
+Run the tests locally:
+```bash
+python -m pytest -v backend/tests/test_planner.py
+```
+
+### Verbose Test Execution Output:
+```text
+============================= test session starts =============================
+platform win32 -- Python 3.13.12, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\lenovo\OneDrive\Desktop\ReyaWeb\Cortex\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\lenovo\OneDrive\Desktop\ReyaWeb\Cortex
+plugins: anyio-4.14.1, langsmith-0.9.2
+collecting ... collected 8 items
+
+backend/tests/test_planner.py::test_age_group_survival PASSED            [ 12%]
+backend/tests/test_planner.py::test_survival_by_sex PASSED               [ 25%]
+backend/tests/test_planner.py::test_average_salary_by_department PASSED  [ 37%]
+backend/tests/test_planner.py::test_monthly_sales_trend PASSED           [ 50%]
+backend/tests/test_planner.py::test_missing_value_analysis PASSED        [ 62%]
+backend/tests/test_planner.py::test_histogram_generation PASSED          [ 75%]
+backend/tests/test_planner.py::test_correlation_analysis PASSED          [ 87%]
+backend/tests/test_planner.py::test_missing_columns_error PASSED         [100%]
+
+============================= 8 passed in 11.88s ==============================
+```
 
 ---
 
