@@ -15,7 +15,6 @@ RUN pip install --no-cache-dir fpdf2
 # Copy source code
 COPY backend/ ./backend/
 COPY datasets/ ./datasets/
-COPY .env .
 
 EXPOSE 8000
 
