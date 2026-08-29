@@ -193,9 +193,6 @@ Cortex/
 
 ```bash
 git clone https://github.com/Reya-Doshi/Cortex.git
-```
-
-```bash
 cd Cortex
 ```
 
@@ -213,33 +210,22 @@ PORT=8000
 #### Step A: Backend Server Setup
 
 ```bash
-# Step 1: Create Python virtual environment
+# 1. Create Python virtual environment
 python -m venv venv
-```
 
-```bash
-# Step 2: Activate virtual environment (Windows PowerShell)
+# 2. Activate virtual environment
+# On Windows (PowerShell):
 .\venv\Scripts\Activate.ps1
-```
-
-```bash
-# Step 2: Activate virtual environment (Windows CMD)
+# On Windows (CMD):
 .\venv\Scripts\activate.bat
-```
-
-```bash
-# Step 2: Activate virtual environment (macOS / Linux)
+# On macOS / Linux:
 source venv/bin/activate
-```
 
-```bash
-# Step 3: Install backend dependencies
+# 3. Install backend dependencies
 pip install -r requirements.txt
 pip install fpdf2
-```
 
-```bash
-# Step 4: Start FastAPI server
+# 4. Start FastAPI server
 uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
@@ -248,17 +234,13 @@ uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
 Open a separate terminal window:
 
 ```bash
-# Step 1: Navigate to frontend directory
+# 1. Navigate to frontend directory
 cd frontend
-```
 
-```bash
-# Step 2: Install Node dependencies
+# 2. Install Node dependencies
 npm install --legacy-peer-deps
-```
 
-```bash
-# Step 3: Start Vite dev server
+# 3. Start Vite dev server
 npm run dev
 ```
 
