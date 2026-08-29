@@ -13,9 +13,9 @@
 
 <br />
 
-> **Upload a dataset, ask any natural language question, and watch a swarm of specialized AI agents plan, execute, and analyze — fully parallelized at 2.14x speedup.**
+> **Upload a CSV, ask a natural language question, and watch a team of AI agents plan, execute, and explain the analysis — in parallel, 2x faster than sequential execution.**
 
-[Explore Live Demo](https://cortex-beta-nine.vercel.app) • [Architecture](#-system-architecture) • [Quick Start](#-quick-start) • [API Docs](#-api-documentation) • [Performance](#-benchmarks--performance)
+[Explore Live Demo](https://cortex-beta-nine.vercel.app) • [System Architecture](#-system-architecture) • [Setup & Installation](#-setup--installation) • [API Documentation](#-api-documentation) • [Benchmarks & Performance](#-benchmarks--performance)
 
 </div>
 
@@ -188,13 +188,15 @@ Cortex/
 
 ---
 
-## 🚀 Quick Start
+## ⚡ Setup & Installation
 
 ### Prerequisites
 - Python 3.10 or higher
 - Node.js 18+ and npm
 - Docker & Docker Compose (Optional for containerized run)
 - Google Gemini API Key ([Get Key Here](https://aistudio.google.com/))
+
+---
 
 ### 1. Clone & Configure
 
@@ -212,33 +214,42 @@ PORT=8000
 
 ---
 
-### 2. Local Manual Setup
+### 2. Local Manual Startup
 
-#### Backend Setup:
+#### Step A: Backend Server Setup
 
 ```bash
-# Create virtual environment
+# 1. Create Python virtual environment
 python -m venv venv
 
-# Activate environment (Windows)
-.\venv\Scripts\activate
-# Activate environment (macOS/Linux)
+# 2. Activate virtual environment
+# Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# Windows (CMD):
+.\venv\Scripts\activate.bat
+# macOS / Linux:
 source venv/bin/activate
 
-# Install backend dependencies
+# 3. Install backend dependencies
 pip install -r requirements.txt
+pip install fpdf2
 
-# Start FastAPI server
+# 4. Start FastAPI server
 uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-#### Frontend Setup:
+#### Step B: Frontend React Setup
 
-Open a second terminal window:
+Open a separate terminal window:
 
 ```bash
+# Navigate to frontend directory
 cd frontend
+
+# Install Node dependencies
 npm install --legacy-peer-deps
+
+# Start Vite dev server
 npm run dev
 ```
 
@@ -248,10 +259,10 @@ Visit **`http://localhost:5173`** in your browser.
 
 ### 3. Docker Deployment 🐳
 
-Deploy the complete stack in a isolated container environment:
+Deploy the full stack in a containerized environment:
 
 ```bash
-# Build and run with Docker Compose
+# Build and start all services in detached mode
 docker-compose up -d --build
 ```
 
@@ -266,9 +277,11 @@ docker-compose up -d --build
 ### `POST /upload`
 Uploads and profiles a new CSV dataset.
 
-**Request:** `multipart/form-data` with `file`.
+- **Endpoint:** `POST /upload`
+- **Content-Type:** `multipart/form-data`
+- **Parameters:** `file` (CSV File)
 
-**Response (200 OK):**
+#### Response `200 OK`:
 ```json
 {
   "file_id": "c7f1a890-4e2b",
@@ -276,24 +289,38 @@ Uploads and profiles a new CSV dataset.
   "file_path": "uploads/c7f1a890-4e2b.csv",
   "rows": 891,
   "columns": 12,
-  "column_names": ["PassengerId", "Survived", "Pclass", "Name", "Sex", "Age", "Fare", "Embarked"]
+  "column_names": [
+    "PassengerId",
+    "Survived",
+    "Pclass",
+    "Name",
+    "Sex",
+    "Age",
+    "Fare",
+    "Embarked"
+  ]
 }
 ```
 
 ---
 
 ### `POST /analyze`
-Triggers the full multi-agent planning, execution, and synthesis pipeline.
+Triggers the multi-agent DAG planning, execution, and synthesis pipeline.
 
-**Request Body:**
+- **Endpoint:** `POST /analyze`
+- **Content-Type:** `application/json`
+
+#### Request Body:
 ```json
 {
   "question": "What is the survival rate by gender and age group?",
-  "file_paths": ["uploads/c7f1a890-4e2b.csv"]
+  "file_paths": [
+    "uploads/c7f1a890-4e2b.csv"
+  ]
 }
 ```
 
-**Response (200 OK):**
+#### Response `200 OK`:
 ```json
 {
   "answer": "Female passengers exhibited a significantly higher survival rate (74.2%) compared to males (18.9%)...",
@@ -330,10 +357,28 @@ Triggers the full multi-agent planning, execution, and synthesis pipeline.
 ### `GET /history`
 Retrieves a list of all historical data investigation runs.
 
+- **Endpoint:** `GET /history`
+
+#### Response `200 OK`:
+```json
+[
+  {
+    "run_id": "run_992a1b4d",
+    "timestamp": "2026-08-29T22:00:00Z",
+    "question": "What is the survival rate by gender and age group?",
+    "speedup_ratio": 2.12,
+    "status": "completed"
+  }
+]
+```
+
 ---
 
 ### `GET /report/{run_id}`
-Generates and streams a downloadable corporate PDF report.
+Generates and streams a downloadable executive PDF report.
+
+- **Endpoint:** `GET /report/{run_id}`
+- **Response:** Binary file stream (`application/pdf`) with `Content-Disposition: attachment; filename="cortex_report_run_992a1b4d.pdf"`.
 
 ---
 
@@ -346,10 +391,12 @@ Cortex features an offline test suite powered by `pytest` with mocked Gemini res
 python -m pytest -v backend/tests/test_planner.py
 ```
 
-### Sample Output:
+### Sample Verbose Test Output:
 ```text
 ============================= test session starts =============================
-platform win32 -- Python 3.10+, pytest-8.x
+platform win32 -- Python 3.10+, pytest-8.x -- venv/Scripts/python.exe
+cachedir: .pytest_cache
+rootdir: Cortex
 collected 8 items
 
 backend/tests/test_planner.py::test_age_group_survival PASSED            [ 12%]
