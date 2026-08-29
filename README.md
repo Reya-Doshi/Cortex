@@ -51,21 +51,21 @@ Cortex separates execution into decoupled layers: UI client, FastAPI web orchest
 
 ```mermaid
 graph TD
-    A[React 18 / Vite Frontend] -->|REST API Requests| B[FastAPI Gateway]
-    B --> C[Profiler Agent]
-    B --> D[Planner Agent - Gemini 2.5 Flash]
+    A["React 18 / Vite Frontend"] -->|"REST API Requests"| B["FastAPI Gateway"]
+    B --> C["Profiler Agent"]
+    B --> D["Planner Agent (Gemini 2.5 Flash)"]
+    D -->|"Strict JSON Schema DAG"| E["Concurrent Tool Executor"]
     
-    D -->|Strict JSON Schema DAG| E[Concurrent Tool Executor]
+    E --> F1["Worker Thread 1: Pandas Engine"]
+    E --> F2["Worker Thread 2: Aggregator"]
+    E --> F3["Worker Thread 3: Visualizer Engine"]
     
-    subgraph "Parallel Execution Pool (ThreadPoolExecutor)"
-        E -->|Worker Thread 1| F1[Python Math / Pandas Engine]
-        E -->|Worker Thread 2| F2[Data Profiler & Aggregator]
-        E -->|Worker Thread 3| F3[Recharts Visualizer Engine]
-    end
+    F1 --> G["Analysis Agent (Insight Synthesizer)"]
+    F2 --> G
+    F3 --> G
     
-    F1 & F2 & F3 --> G[Analysis Agent - Insight Synthesizer]
-    G --> H[Report Generator - PDF / History Storage]
-    H -->|JSON / Streamed PDF| A
+    G --> H["Report Generator (PDF / History Storage)"]
+    H -->|"JSON / Streamed PDF"| A
 ```
 
 ### Decoupled Data & Agent Flow
@@ -202,6 +202,9 @@ Cortex/
 
 ```bash
 git clone https://github.com/Reya-Doshi/Cortex.git
+```
+
+```bash
 cd Cortex
 ```
 
@@ -219,22 +222,33 @@ PORT=8000
 #### Step A: Backend Server Setup
 
 ```bash
-# 1. Create Python virtual environment
+# Step 1: Create Python virtual environment
 python -m venv venv
+```
 
-# 2. Activate virtual environment
-# Windows (PowerShell):
+```bash
+# Step 2: Activate virtual environment (Windows PowerShell)
 .\venv\Scripts\Activate.ps1
-# Windows (CMD):
-.\venv\Scripts\activate.bat
-# macOS / Linux:
-source venv/bin/activate
+```
 
-# 3. Install backend dependencies
+```bash
+# Step 2: Activate virtual environment (Windows CMD)
+.\venv\Scripts\activate.bat
+```
+
+```bash
+# Step 2: Activate virtual environment (macOS / Linux)
+source venv/bin/activate
+```
+
+```bash
+# Step 3: Install backend dependencies
 pip install -r requirements.txt
 pip install fpdf2
+```
 
-# 4. Start FastAPI server
+```bash
+# Step 4: Start FastAPI server
 uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
@@ -243,13 +257,17 @@ uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
 Open a separate terminal window:
 
 ```bash
-# Navigate to frontend directory
+# Step 1: Navigate to frontend directory
 cd frontend
+```
 
-# Install Node dependencies
+```bash
+# Step 2: Install Node dependencies
 npm install --legacy-peer-deps
+```
 
-# Start Vite dev server
+```bash
+# Step 3: Start Vite dev server
 npm run dev
 ```
 
