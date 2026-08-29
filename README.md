@@ -13,6 +13,10 @@
 
 <br />
 
+![Cortex Platform Interface](frontend/src/assets/hero.png)
+
+<br />
+
 > **Upload a CSV, ask a natural language question, and watch a team of AI agents plan, execute, and explain the analysis — in parallel, 2x faster than sequential execution.**
 
 [Explore Live Demo](https://cortex-beta-nine.vercel.app) • [System Architecture](#-system-architecture) • [Setup & Installation](#-setup--installation) • [API Documentation](#-api-documentation) • [Benchmarks & Performance](#-benchmarks--performance)
@@ -49,59 +53,46 @@ Unlike linear LLM code execution loops, Cortex decouples analytical planning fro
 
 Cortex separates execution into decoupled layers: UI client, FastAPI web orchestrator, Gemini planner, concurrent tool runner, and visualizer.
 
-```mermaid
-graph TD
-    A["React 18 / Vite Frontend"] -->|"REST API Requests"| B["FastAPI Gateway"]
-    B --> C["Profiler Agent"]
-    B --> D["Planner Agent (Gemini 2.5 Flash)"]
-    D -->|"Strict JSON Schema DAG"| E["Concurrent Tool Executor"]
-    
-    E --> F1["Worker Thread 1: Pandas Engine"]
-    E --> F2["Worker Thread 2: Aggregator"]
-    E --> F3["Worker Thread 3: Visualizer Engine"]
-    
-    F1 --> G["Analysis Agent (Insight Synthesizer)"]
-    F2 --> G
-    F3 --> G
-    
-    G --> H["Report Generator (PDF / History Storage)"]
-    H -->|"JSON / Streamed PDF"| A
-```
-
-### Decoupled Data & Agent Flow
-
 ```text
-               ┌─────────────────────────────────────────┐
-               │              React Client               │
-               └────────────────────┬────────────────────┘
-                                    │
-                    HTTP Requests   │   PDF & JSON Reports
-                                    ▼
-               ┌─────────────────────────────────────────┐
-               │           FastAPI Web Server            │
-               └────────────────────┬────────────────────┘
-                                    │
-       ┌────────────────────────────┼────────────────────────────┐
-       ▼                            ▼                            ▼
-┌──────────────┐             ┌──────────────┐             ┌──────────────┐
-│ Profiler     │             │ Planner      │             │ History /    │
-│ Engine       │             │ (Gemini 2.5) │             │ PDF Exporter │
-└──────────────┘             └──────┬───────┘             └──────────────┘
-                                    │
-                            Constructs DAG
-                                    │
-                                    ▼
-                     ┌─────────────────────────────┐
-                     │    Concurrent DAG Runner    │
-                     │    (ThreadPoolExecutor)     │
-                     └──────────────┬──────────────┘
-                                    │
-            ┌───────────────────────┼───────────────────────┐
-            ▼                       ▼                       ▼
-   ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-   │ Aggregations    │     │ GroupBy / Bins  │     │ Visual Spec     │
-   │ & Filtering     │     │ & Stat Computes │     │ Generator       │
-   └─────────────────┘     └─────────────────┘     └─────────────────┘
+                                ┌─────────────────────────┐
+                                │   React 18 / Vite UI    │
+                                └────────────┬────────────┘
+                                             │
+                             HTTP REST API   │   PDF & JSON Reports
+                                             ▼
+                                ┌─────────────────────────┐
+                                │   FastAPI Web Gateway   │
+                                └────────────┬────────────┘
+                                             │
+             ┌───────────────────────────────┼───────────────────────────────┐
+             ▼                               ▼                               ▼
+    ┌─────────────────┐             ┌─────────────────┐             ┌─────────────────┐
+    │  Profiler Tool  │             │  Planner Agent  │             │ History / Report│
+    │ (Data Profiler) │             │ (Gemini 2.5)    │             │    Generators   │
+    └─────────────────┘             └────────┬────────┘             └─────────────────┘
+                                             │
+                                     Strict JSON Schema DAG
+                                             │
+                                             ▼
+                             ┌───────────────────────────────┐
+                             │    Concurrent Tool Executor   │
+                             │     (ThreadPoolExecutor)      │
+                             └───────────────┬───────────────┘
+                                             │
+                     ┌───────────────────────┼───────────────────────┐
+                     ▼                       ▼                       ▼
+            ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+            │ Worker Thread 1 │     │ Worker Thread 2 │     │ Worker Thread 3 │
+            │ Pandas Engine   │     │ Data Aggregator │     │ Visualizer Spec │
+            └────────┬────────┘     └────────┬────────┘     └────────┬────────┘
+                     │                       │                       │
+                     └───────────────────────┼───────────────────────┘
+                                             │
+                                             ▼
+                                ┌─────────────────────────┐
+                                │     Analysis Agent      │
+                                │   (Insight Synthesizer) │
+                                └─────────────────────────┘
 ```
 
 ---
