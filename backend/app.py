@@ -202,3 +202,16 @@ def download_report(run_id: str):
 async def http_exception_handler(_request, exc: HTTPException) -> JSONResponse:
     """Return consistent JSON error payloads."""
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
+
+def main() -> None:
+    """CLI entrypoint to run the Cortex FastAPI backend server."""
+    import os
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("backend.app:app", host="0.0.0.0", port=port, reload=True)
+
+
+if __name__ == "__main__":
+    main()
+

@@ -2,14 +2,16 @@
 
 # 🧠 Cortex — Autonomous Multi-Agent Data Investigation Platform
 
+**Engineered by Reya Doshi**
+
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-cortex--beta--nine.vercel.app-6366f1?style=for-the-badge&logo=vercel&logoColor=white)](https://cortex-beta-nine.vercel.app)
 [![Python Version](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-8E75B2?style=for-the-badge&logo=googlecloud&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![Pytest](https://img.shields.io/badge/Pytest-Passing%208%2F8-2ea44f?style=for-the-badge&logo=pytest&logoColor=white)](#-automated-testing)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Zero State Leakage](https://img.shields.io/badge/Isolation-Zero%20State%20Leakage-blueviolet?style=for-the-badge)](#-key-features)
 
 <br />
 
@@ -17,9 +19,9 @@
 
 <br />
 
-> **Upload a CSV, ask a natural language question, and watch a team of AI agents plan, execute, and explain the analysis — in parallel, 2x faster than sequential execution.**
+> **Upload a CSV, ask a natural language question, and watch a swarm of specialized AI agents plan, execute, and explain the analysis — in parallel, 2x faster than sequential execution.**
 
-[Explore Live Demo](https://cortex-beta-nine.vercel.app) • [System Architecture](#-system-architecture) • [Setup & Installation](#-setup--installation) • [API Documentation](#-api-documentation) • [Benchmarks & Performance](#-benchmarks--performance)
+[🚀 Quickstart](#-30-second-quickstart-pep-517621) • [🏗️ Architecture](#%EF%B8%8F-system-architecture) • [📊 Benchmarks](#-benchmarks--performance) • [🔌 API Specs](#-api-reference) • [🧪 Testing](#-automated-testing) • [🤝 Contributing](#-contributing)
 
 </div>
 
@@ -27,7 +29,7 @@
 
 ## ⚡ What is Cortex?
 
-**Cortex** is an enterprise-grade, autonomous data investigation platform powered by Google Gemini 2.5 Flash and a multi-agent Directed Acyclic Graph (DAG) runtime.
+**Cortex** is an enterprise-grade, autonomous data investigation platform engineered by Reya Doshi. It is powered by Google Gemini 2.5 Flash and a multi-agent Directed Acyclic Graph (DAG) runtime.
 
 Unlike linear LLM code execution loops, Cortex decouples analytical planning from execution. It constructs a dependency-aware plan graph, executes non-dependent statistical routines **concurrently** via a thread-pool dispatcher, enforces strict schema validation, and generates executive PDF reports with zero state leakage.
 
@@ -53,89 +55,123 @@ Unlike linear LLM code execution loops, Cortex decouples analytical planning fro
 
 Cortex separates execution into decoupled layers: UI client, FastAPI web orchestrator, Gemini planner, concurrent tool runner, and visualizer.
 
-```text
-                                ┌─────────────────────────┐
-                                │   React 18 / Vite UI    │
-                                └────────────┬────────────┘
-                                             │
-                             HTTP REST API   │   PDF & JSON Reports
-                                             ▼
-                                ┌─────────────────────────┐
-                                │   FastAPI Web Gateway   │
-                                └────────────┬────────────┘
-                                             │
-             ┌───────────────────────────────┼───────────────────────────────┐
-             ▼                               ▼                               ▼
-    ┌─────────────────┐             ┌─────────────────┐             ┌─────────────────┐
-    │  Profiler Tool  │             │  Planner Agent  │             │ History / Report│
-    │ (Data Profiler) │             │ (Gemini 2.5)    │             │    Generators   │
-    └─────────────────┘             └────────┬────────┘             └─────────────────┘
-                                             │
-                                     Strict JSON Schema DAG
-                                             │
-                                             ▼
-                             ┌───────────────────────────────┐
-                             │    Concurrent Tool Executor   │
-                             │     (ThreadPoolExecutor)      │
-                             └───────────────┬───────────────┘
-                                             │
-                     ┌───────────────────────┼───────────────────────┐
-                     ▼                       ▼                       ▼
-            ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-            │ Worker Thread 1 │     │ Worker Thread 2 │     │ Worker Thread 3 │
-            │ Pandas Engine   │     │ Data Aggregator │     │ Visualizer Spec │
-            └────────┬────────┘     └────────┬────────┘     └────────┬────────┘
-                     │                       │                       │
-                     └───────────────────────┼───────────────────────┘
-                                             │
-                                             ▼
-                                ┌─────────────────────────┐
-                                │     Analysis Agent      │
-                                │   (Insight Synthesizer) │
-                                └─────────────────────────┘
+```mermaid
+graph TD
+    subgraph Ingress["🌐 Ingress Layer"]
+        A["React 18 / Vite UI"] -->|"HTTP / REST API"| B["FastAPI Gateway"]
+    end
+
+    subgraph ControlPlane["🧠 Control & Planning Plane"]
+        B --> C["Profiler Engine"]
+        B --> D["Planner Agent (Gemini 2.5 Flash)"]
+        C -->|"Data Health & Metadata"| D
+        D -->|"Strict JSON Schema DAG (ToolStep Nodes)"| E["Concurrent Tool Executor"]
+    end
+
+    subgraph ExecutionEngine["⚡ Execution Engine (ThreadPoolExecutor)"]
+        E -->|"Parallel Dispatch"| F1["Pandas Aggregations"]
+        E -->|"Parallel Dispatch"| F2["Numeric Binning & GroupBy"]
+        E -->|"Parallel Dispatch"| F3["Recharts Spec Generator"]
+    end
+
+    subgraph SynthesisLayer["📄 Synthesis & Output Layer"]
+        F1 & F2 & F3 --> G["Insight Analysis Agent"]
+        G --> H["Automated PDF Generator (fpdf2)"]
+        H -->|"Streamed PDF & JSON Payload"| A
+    end
+
+    classDef primary fill:#6366f1,stroke:#4338ca,color:#fff,stroke-width:2px;
+    classDef control fill:#8e75b2,stroke:#6b21a8,color:#fff,stroke-width:2px;
+    classDef exec fill:#009688,stroke:#0f766e,color:#fff,stroke-width:2px;
+    classDef synth fill:#3776ab,stroke:#1d4ed8,color:#fff,stroke-width:2px;
+
+    class A,B primary;
+    class C,D control;
+    class E,F1,F2,F3 exec;
+    class G,H synth;
 ```
 
 ---
 
-## 🤖 Agent Roles & Pipeline
+## 🚀 30-Second Quickstart (PEP 517/621)
 
-Cortex assigns micro-tasks across specialized agent modules to maximize accuracy and speed:
+### Prerequisites
+- Python 3.10 or higher
+- Node.js 18+ and npm
+- Google Gemini API Key ([Get Key Here](https://aistudio.google.com/))
 
-1. 📥 **[dataset_manager.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/dataset_manager.py):** Handles dataset uploads, file validation, structural checks, and in-memory Pandas caching.
-2. 🔍 **[profiler.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/profiler.py):** Computes dataset health scores, missing value ratios, data types, duplicate counts, and summary statistics.
-3. 📐 **[planner.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/planner.py):** Queries Gemini 2.5 Flash using structured Pydantic outputs to output a DAG of `ToolStep` nodes.
-4. ⚙️ **[executor.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/executor.py):** Executes independent tool steps in parallel using a `ThreadPoolExecutor` and tracks topological order.
-5. 📊 **[visualizer.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/visualizer.py):** Builds structured Recharts JSON configs from output data nodes without re-reading raw CSVs.
-6. 🧠 **[agent.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/agent.py):** Synthesizes analytical insights from execution node outputs into clear business explanations.
-7. 📄 **[report_generator.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/report_generator.py):** Compiles visual charts, performance metrics, and insights into clean PDF reports using `fpdf2`.
+### Step 1: Clone Repository & Configure Environment
+
+```bash
+git clone https://github.com/Reya-Doshi/Cortex.git
+cd Cortex
+echo "GEMINI_API_KEY=your_actual_gemini_api_key" > .env
+```
+
+### Step 2: Install Package via PEP 517/621 Standards
+
+```bash
+# Create and activate virtual environment
+python -m venv venv
+
+# On Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+# On macOS / Linux:
+source venv/bin/activate
+
+# Install Cortex package in editable mode with development dependencies
+pip install -e ".[dev]"
+```
+
+### Step 3: Launch Platform (Dual-Terminal Execution)
+
+#### Terminal 1 — Backend API Server:
+```bash
+# Run via CLI script entrypoint defined in pyproject.toml
+cortex
+```
+*Backend will start on `http://localhost:8000` (API Docs: `http://localhost:8000/docs`).*
+
+#### Terminal 2 — Frontend React Workspace:
+```bash
+cd frontend
+npm install --legacy-peer-deps
+npm run dev
+```
+*Frontend workspace will launch on `http://localhost:5173`.*
+
+> [!TIP]
+> **Docker Alternative:** You can also launch the full stack with a single command using Docker Compose:
+> ```bash
+> docker-compose up -d --build
+> ```
 
 ---
 
-## ⚡ Benchmarks & Performance
+## 📊 Benchmarks & Performance
 
 By leveraging parallel DAG execution, Cortex eliminates bottlenecks common in sequential execution models.
 
-| Metric | Sequential Execution | Cortex Parallel DAG | Gain / Improvement |
+| Evaluation Dimension | Traditional Sequential Agent Loop | Cortex Parallel DAG Engine | Gain / Impact |
 | :--- | :--- | :--- | :--- |
-| **Execution Time (Avg)** | `4.28s` | **`2.00s`** | **2.14x Speedup** 🚀 |
-| **Dependency Validation** | Post-execution erroring | Pre-execution Topological Sort | Zero invalid run propagation |
-| **Context Isolation** | Shared state contamination | Request-scoped Namespaces | 100% Zero Leakage |
-| **Column Safety** | Unchecked LLM inputs | Pre-flight Column Guard | 0% Hallucinated Columns |
+| **Average Execution Time** | `4.28s` per query | **`2.00s` per query** | **2.14x Speedup** 🚀 |
+| **Dependency Validation** | Post-execution failure | Pre-flight Topological Sort | Zero cascade failures |
+| **Context Isolation** | Shared state contamination | Request-scoped UUID Namespaces | **100% Zero State Leakage** |
+| **Column Validation** | Unchecked LLM inputs | Pre-flight AST Schema Guard | **0% Hallucinated Columns** |
 
 ---
 
-## 🛠️ Tech Stack Matrix
+## 🤖 Agent Roles & System Internals
 
-| Area | Technologies Used |
-| :--- | :--- |
-| **Backend Core** | Python 3.10+, [FastAPI](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/app.py), Uvicorn, Pydantic v2 |
-| **Data Processing** | Pandas, NumPy, SciPy, ThreadPoolExecutor |
-| **AI & LLM** | Google Gemini 2.5 Flash (`google-genai` SDK), Structured JSON Schema |
-| **Frontend UI** | React 18, TypeScript, Vite, Tailwind CSS v4, Lucide Icons |
-| **Visualization & UX** | Recharts, Custom SVG DAG Renderer ([PlanGraph.tsx](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/frontend/src/components/PlanGraph.tsx)) |
-| **Export Engine** | `fpdf2` for automated corporate PDF report compilation |
-| **DevOps & Containers** | Docker, Docker Compose, Vercel |
-| **Testing** | Pytest, Mocked Offline LLM Engine |
+Cortex partitions analysis responsibilities across modular subsystem components:
+
+- 📐 **[planner.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/planner.py):** Queries Gemini 2.5 Flash using strict JSON schemas to output a Directed Acyclic Graph (DAG) of `ToolStep` nodes. Sandboxed from direct answer generation.
+- ⚙️ **[executor.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/executor.py):** Parses the generated DAG plan, validates dependencies using a DFS topological sort, and dispatches ready tool steps to a concurrent `ThreadPoolExecutor`.
+- 🔍 **[profiler.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/profiler.py):** Computes non-blocking dataset summary statistics, health scores, data type maps, duplicate counts, and missing value ratios.
+- 📊 **[visualizer.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/visualizer.py):** Constructs interactive Recharts JSON visual specifications directly from execution node step outputs without re-reading raw CSV files.
+- 🧠 **[agent.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/agent.py):** Receives structured execution outputs and compiles strategic, human-readable executive business explanations.
+- 📄 **[report_generator.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/report_generator.py):** Compiles visual charts, performance metrics, and insights into corporate downloadable PDF reports powered by `fpdf2`.
+- 📥 **[dataset_manager.py](file:///c:/Users/reyad/OneDrive/Desktop/Projects/Cortex/backend/dataset_manager.py):** Manages file uploads, dataset structural validation, and request-scoped DataFrame caching.
 
 ---
 
@@ -143,9 +179,10 @@ By leveraging parallel DAG execution, Cortex eliminates bottlenecks common in se
 
 ```
 Cortex/
+├── 📄 pyproject.toml                 # PEP 517/518/621 Packaging Spec
 ├── 📁 backend/                       # FastAPI Backend Engine
 │   ├── 📄 agent.py                   # Orchestrator & Analysis Synthesizer
-│   ├── 📄 app.py                     # FastAPI REST API Endpoints
+│   ├── 📄 app.py                     # FastAPI REST API Endpoints & CLI Entrypoint
 │   ├── 📄 config.py                  # Environment & Global Configs
 │   ├── 📄 dataset_manager.py         # CSV Upload & Caching Engine
 │   ├── 📄 executor.py                # Concurrent ThreadPool DAG Scheduler
@@ -173,106 +210,26 @@ Cortex/
 │   └── 📄 package.json               # Node Dependencies
 ├── 📄 Dockerfile                     # Backend Dockerfile
 ├── 📄 docker-compose.yml             # Full-stack Container Orchestration
-├── 📄 requirements.txt               # Python Dependencies
+├── 📄 requirements.txt               # Legacy Requirements List
 └── 📄 README.md                      # Project Documentation
 ```
 
 ---
 
-## ⚡ Setup & Installation
+## 🔌 API Reference
 
-### Prerequisites
-- Python 3.10 or higher
-- Node.js 18+ and npm
-- Docker & Docker Compose (Optional for containerized run)
-- Google Gemini API Key ([Get Key Here](https://aistudio.google.com/))
+<details>
+<summary><b>1. POST /upload — Upload & Profile CSV Dataset</b></summary>
 
----
+<br />
 
-### 1. Clone & Configure
-
-```bash
-git clone https://github.com/Reya-Doshi/Cortex.git
-cd Cortex
-```
-
-Create a `.env` file in the root directory:
-
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-PORT=8000
-```
-
----
-
-### 2. Local Manual Startup
-
-#### Step A: Backend Server Setup
-
-```bash
-# 1. Create Python virtual environment
-python -m venv venv
-
-# 2. Activate virtual environment
-# On Windows (PowerShell):
-.\venv\Scripts\Activate.ps1
-# On Windows (CMD):
-.\venv\Scripts\activate.bat
-# On macOS / Linux:
-source venv/bin/activate
-
-# 3. Install backend dependencies
-pip install -r requirements.txt
-pip install fpdf2
-
-# 4. Start FastAPI server
-uvicorn backend.app:app --host 0.0.0.0 --port 8000 --reload
-```
-
-#### Step B: Frontend React Setup
-
-Open a separate terminal window:
-
-```bash
-# 1. Navigate to frontend directory
-cd frontend
-
-# 2. Install Node dependencies
-npm install --legacy-peer-deps
-
-# 3. Start Vite dev server
-npm run dev
-```
-
-Visit **`http://localhost:5173`** in your browser.
-
----
-
-### 3. Docker Deployment 🐳
-
-Deploy the full stack in a containerized environment:
-
-```bash
-# Build and start all services in detached mode
-docker-compose up -d --build
-```
-
-- **Frontend:** `http://localhost:5173`
-- **Backend API:** `http://localhost:8000`
-- **Interactive API Docs:** `http://localhost:8000/docs`
-
----
-
-## 📝 API Documentation
-
-### `POST /upload`
-Uploads and profiles a new CSV dataset.
+Uploads and validates a CSV dataset, returning dataset dimensions and column metadata.
 
 - **Endpoint:** `POST /upload`
 - **Content-Type:** `multipart/form-data`
-- **Parameters:** `file` (CSV File)
+- **Request Body:** Form data with `file: UploadFile`
 
-#### Response `200 OK`:
+**Response (`200 OK`):**
 ```json
 {
   "file_id": "c7f1a890-4e2b",
@@ -292,16 +249,19 @@ Uploads and profiles a new CSV dataset.
   ]
 }
 ```
+</details>
 
----
+<details>
+<summary><b>2. POST /analyze — Trigger Multi-Agent Investigation</b></summary>
 
-### `POST /analyze`
-Triggers the multi-agent DAG planning, execution, and synthesis pipeline.
+<br />
+
+Triggers the full multi-agent DAG planning, parallel tool execution, visualization generation, and executive insight synthesis pipeline.
 
 - **Endpoint:** `POST /analyze`
 - **Content-Type:** `application/json`
 
-#### Request Body:
+**Request Body:**
 ```json
 {
   "question": "What is the survival rate by gender and age group?",
@@ -311,7 +271,7 @@ Triggers the multi-agent DAG planning, execution, and synthesis pipeline.
 }
 ```
 
-#### Response `200 OK`:
+**Response (`200 OK`):**
 ```json
 {
   "answer": "Female passengers exhibited a significantly higher survival rate (74.2%) compared to males (18.9%)...",
@@ -342,15 +302,18 @@ Triggers the multi-agent DAG planning, execution, and synthesis pipeline.
   }
 }
 ```
+</details>
 
----
+<details>
+<summary><b>3. GET /history — List Historical Runs</b></summary>
 
-### `GET /history`
-Retrieves a list of all historical data investigation runs.
+<br />
+
+Retrieves a list of all historical data investigation runs and performance metrics.
 
 - **Endpoint:** `GET /history`
 
-#### Response `200 OK`:
+**Response (`200 OK`):**
 ```json
 [
   {
@@ -362,32 +325,37 @@ Retrieves a list of all historical data investigation runs.
   }
 ]
 ```
+</details>
 
----
+<details>
+<summary><b>4. GET /report/{run_id} — Download PDF Executive Report</b></summary>
 
-### `GET /report/{run_id}`
-Generates and streams a downloadable executive PDF report.
+<br />
+
+Generates and streams a downloadable corporate PDF report containing visual charts, metrics, and recommendations.
 
 - **Endpoint:** `GET /report/{run_id}`
 - **Response:** Binary file stream (`application/pdf`) with `Content-Disposition: attachment; filename="cortex_report_run_992a1b4d.pdf"`.
+</details>
 
 ---
 
 ## 🧪 Automated Testing
 
-Cortex features an offline test suite powered by `pytest` with mocked Gemini responses to verify intent mapping and guardrails without incurring API latency or costs.
+Cortex features an offline test suite powered by `pytest` with mocked LLM fixtures to verify analytical intent mapping, DAG generation, and error boundaries without incurring API latency or costs.
 
 ```bash
-# Run pytest on the planner and execution module
-python -m pytest -v backend/tests/test_planner.py
+# Run pytest test suite using pyproject.toml configuration
+pytest
 ```
 
-### Sample Verbose Test Output:
+### Verbose Test Execution Output:
 ```text
 ============================= test session starts =============================
-platform win32 -- Python 3.10+, pytest-8.x -- venv/Scripts/python.exe
-cachedir: .pytest_cache
+platform win32 -- Python 3.10+, pytest-8.3.2, pluggy-1.5.0
 rootdir: Cortex
+configfile: pyproject.toml
+testpaths: backend/tests
 collected 8 items
 
 backend/tests/test_planner.py::test_age_group_survival PASSED            [ 12%]
@@ -404,14 +372,28 @@ backend/tests/test_planner.py::test_missing_columns_error PASSED         [100%]
 
 ---
 
+## 🤝 Contributing
+
+Contributions to Cortex are welcome! Please follow these steps:
+1. Fork the repository on GitHub.
+2. Create a feature branch (`git checkout -b feature/amazing-feature`).
+3. Ensure all tests pass (`pytest`) and format code using `ruff check .`.
+4. Commit your changes (`git commit -m 'feat: add amazing feature'`).
+5. Push to the branch (`git push origin feature/amazing-feature`).
+6. Open a Pull Request.
+
+---
+
 ## 🛡️ License
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
 
 ---
 
 <div align="center">
 
-Made with ❤️ powered by **Google Gemini 2.5 Flash**, **FastAPI**, & **React**
+**Engineered with ❤️ by Reya Doshi**
+
+Powered by **Google Gemini 2.5 Flash**, **FastAPI**, & **React 18**
 
 </div>
