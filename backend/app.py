@@ -50,10 +50,11 @@ def on_startup() -> None:
     logger.info("Cortex backend started.")
 
 
-@app.get("/health", response_model=HealthResponse, tags=["system"])
+@app.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse, tags=["system"])
 def health() -> HealthResponse:
     """Return service health status."""
     return HealthResponse(status="ok", service="Cortex", version=__version__)
+
 
 
 @app.post(
