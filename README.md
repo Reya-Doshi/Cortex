@@ -1,39 +1,126 @@
-# Cortex — Autonomous Multi-Agent Data Investigation Platform
+<div align="center">
+
+# 🧠 Cortex — Autonomous Multi-Agent Data Investigation Platform
 
 **Engineered by Reya Doshi**
 
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-green.svg)](https://fastapi.tiangolo.com/)
-[![React 18](https://img.shields.io/badge/React-18-cyan.svg)](https://react.dev/)
-[![Tests Passing](https://img.shields.io/badge/Tests-22%2F22%20Passing-brightgreen.svg)](docs/verification.md)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-cortex--beta--nine.vercel.app-6366f1?style=for-the-badge&logo=vercel&logoColor=white)](https://cortex-beta-nine.vercel.app)
+[![Python Version](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Gemini](https://img.shields.io/badge/AI-Gemini%202.5%20Flash-8E75B2?style=for-the-badge&logo=googlecloud&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![Tests Passing](https://img.shields.io/badge/Tests-22%2F22%20Passing-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](docs/verification.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-Cortex is an autonomous multi-agent data investigation platform that converts natural language questions about tabular datasets into structured plan graphs, runs data aggregation routines concurrently, and synthesizes interactive visualizations with executive PDF reports.
-
-> **Status:** Actively Maintained Prototype.  
-> **Documentation:** [System Architecture](docs/architecture.md) | [API Specification](docs/api.md) | [Audit & Verification Report](docs/verification.md) | [Live Web Demo](https://cortex-beta-nine.vercel.app) *(Subject to serverless API availability)*.
+<br />
 
 ![Cortex Platform Interface](frontend/src/assets/hero.png)
 
----
+<br />
 
-## Implemented Capabilities
+> **Upload a CSV dataset, ask any natural language question, and watch a swarm of specialized AI agents profile, plan a Directed Acyclic Graph (DAG), execute transformations in parallel, and generate interactive visual analytics.**
 
-- **Dependency-Aware DAG Scheduler:** Validates execution graphs for circular dependencies via DFS topological sorting and dispatches ready tool steps to a `ThreadPoolExecutor`.
-- **Request-Scoped State Isolation:** Namespaces DataFrame caches with unique `execution_id`s (`f"{execution_id}:{path}"`) to prevent state cross-contamination between concurrent requests.
-- **Pre-Flight Schema Guardrails:** Validates query column presence before invoking planner routines, rejecting queries with missing required fields before execution.
-- **Visual Chart Spec Generator:** Generates interactive Recharts configuration specifications (bar, line, pie, histogram) directly from processed tool step outputs without re-reading raw CSV files.
-- **Automated PDF Exporter:** Renders investigation metadata, tool timings, executive explanations, and strategic recommendations into downloadable PDF reports using `fpdf2`.
+[🚀 Quickstart](#-quickstart) • [🏗️ System Architecture](#%EF%B8%8F-system-architecture) • [🛠️ Tech Stack](#%EF%B8%8F-tech-stack-overview) • [🔌 API Specs](docs/api.md) • [🧪 Testing](docs/verification.md)
+
+</div>
 
 ---
 
-## Concrete Example
+## ⚡ Simple Bio & Overview
+
+**Cortex** is an open-source, multi-agent data investigation platform. You upload a CSV file and ask questions in plain English (e.g. *"What is the survival rate by gender and age group?"*). 
+
+Instead of generating unverified code line-by-line, Cortex breaks the task down into a **Directed Acyclic Graph (DAG)** of independent analysis steps, runs them concurrently, enforces schema validation, and returns an interactive dashboard alongside an executive PDF report.
+
+---
+
+## 🛠️ Tech Stack Overview
+
+| Area | Technologies & Libraries Used |
+| :--- | :--- |
+| **Backend API Gateway** | Python 3.10+, **FastAPI**, Uvicorn, Pydantic v2, Python-Dotenv |
+| **Data Processing Engine** | **Pandas**, NumPy, SciPy, ThreadPoolExecutor |
+| **AI & LLM Orchestration** | **Google Gemini 2.5 Flash** (`google-genai` SDK), Structured Pydantic JSON Schemas |
+| **Frontend UI Workspace** | **React 18**, TypeScript, Vite, Tailwind CSS v4, Lucide Icons |
+| **Data Visualizations** | **Recharts**, Custom SVG DAG Pipeline Renderer ([PlanGraph.tsx](frontend/src/components/PlanGraph.tsx)) |
+| **Report Export Engine** | **`fpdf2`** (Automated Corporate PDF Report Compiler) |
+| **Testing & Verification** | **Pytest** (22/22 Passing Tests), Pytest-Mock, Ruff Linter |
+| **DevOps & Containers** | Docker, Docker Compose, Vercel |
+
+---
+
+## 🏗️ System Architecture
+
+Cortex separates responsibilities across specialized, decoupled agent modules:
+
+```mermaid
+graph TD
+    subgraph Ingress["🌐 Ingress Layer"]
+        UI["React 18 / Vite UI Client"] -->|"REST API (HTTP / JSON)"| Gateway["FastAPI Web Gateway"]
+    end
+
+    subgraph ControlPlane["🧠 Control & Planning Plane"]
+        Gateway --> Profiler["Profiler Agent"]
+        Gateway --> Planner["Planner Agent (Gemini 2.5 Flash)"]
+        Profiler -->|"Dataset Metadata & Schema"| Planner
+        Planner -->|"Structured JSON DAG (ToolStep Nodes)"| Executor["Concurrent Tool Executor"]
+    end
+
+    subgraph ExecutionEngine["⚡ Parallel Execution Engine (ThreadPoolExecutor)"]
+        Executor -->|"Parallel Task 1"| Thread1["Pandas Aggregation Engine"]
+        Executor -->|"Parallel Task 2"| Thread2["Numeric Binning & GroupBy"]
+        Executor -->|"Parallel Task 3"| Thread3["Statistical Profiling"]
+    end
+
+    subgraph OutputLayer["📊 Visualization & Output Layer"]
+        Thread1 & Thread2 & Thread3 --> Visualizer["Visualizer Agent (Recharts Specs)"]
+        Visualizer --> Synthesizer["Analysis Agent (Insight Synthesizer)"]
+        Synthesizer --> PDFExporter["PDF Report Generator (fpdf2)"]
+        PDFExporter -->|"Streamed PDF & JSON Payload"| UI
+    end
+
+    classDef ingress fill:#6366f1,stroke:#4338ca,color:#fff,stroke-width:2px;
+    classDef control fill:#8e75b2,stroke:#6b21a8,color:#fff,stroke-width:2px;
+    classDef exec fill:#009688,stroke:#0f766e,color:#fff,stroke-width:2px;
+    classDef output fill:#3776ab,stroke:#1d4ed8,color:#fff,stroke-width:2px;
+
+    class UI,Gateway ingress;
+    class Profiler,Planner control;
+    class Executor,Thread1,Thread2,Thread3 exec;
+    class Visualizer,Synthesizer,PDFExporter output;
+```
+
+### Decoupled Agent Pipeline Flow
+
+1. 📥 **[dataset_manager.py](backend/dataset_manager.py):** Uploads and caches DataFrames namespaced by `execution_id` (`f"{execution_id}:{path}"`) to isolate state across concurrent requests.
+2. 🔍 **[profiler.py](backend/profiler.py):** Calculates non-blocking dataset health scores, missing value ratios, data types, duplicate counts, and summary statistics.
+3. 📐 **[planner.py](backend/planner.py):** Queries Gemini 2.5 Flash using structured JSON schemas to construct a DAG plan of `ToolStep` nodes. Validates column presence upfront.
+4. ⚙️ **[executor.py](backend/executor.py):** Checks the DAG for cyclic dependencies using a DFS topological sort (`_topological_sort`) and executes ready tool steps concurrently using `ThreadPoolExecutor`.
+5. 📊 **[visualizer.py](backend/visualizer.py):** Constructs interactive Recharts visual specifications directly from execution step outputs without re-reading raw CSV files.
+6. 🧠 **[agent.py](backend/agent.py):** Interprets execution results and synthesizes human-readable business summaries.
+7. 📄 **[report_generator.py](backend/report_generator.py):** Compiles investigation metadata, step details, metrics, and insights into corporate downloadable PDF reports (`fpdf2`).
+
+---
+
+## ✨ Implemented Capabilities
+
+- ⚡ **Parallel DAG Scheduler:** Dynamically tracks task dependencies and dispatches non-dependent steps to a concurrent thread pool.
+- 🛡️ **Request-Scoped State Isolation:** Guarantees zero cross-request cache pollution by namespacing DataFrame cache keys with unique `execution_id` UUIDs.
+- 🎯 **Pre-Flight Schema Guardrails:** Validates required column existence before running LLM planning, returning clean error messages when columns are missing.
+- 📊 **Interactive Visual Specs:** Builds structured Recharts JSON objects (bar, line, pie, histogram) rendered natively in the React workspace.
+- 📄 **Automated PDF Export:** Exports full investigation runs into formatted, corporate PDF reports.
+- 🧪 **22/22 Passing Offline Test Suite:** Full Pytest test suite testing DAG sorting, edge cases, error cascades, and state isolation without calling live APIs.
+
+---
+
+## 💡 Concrete Example
 
 ### Input
-- **Dataset (`titanic.csv`):** Columns `PassengerId`, `Survived`, `Pclass`, `Name`, `Sex`, `Age`
-- **Question:** *"What is the survival rate by gender?"*
+- **Dataset (`titanic.csv`):** `PassengerId`, `Survived`, `Pclass`, `Name`, `Sex`, `Age`
+- **User Question:** *"What is the survival rate by gender?"*
 
-### Execution Plan & Output Payload
+### Generated Execution Plan & Response
 ```json
 {
   "plan": {
@@ -49,28 +136,22 @@ Cortex is an autonomous multi-agent data investigation platform that converts na
   "metrics": { "total_duration_ms": 1940.5 }
 }
 ```
-*Note: In offline testing or fallbacks, LLM outputs are generated using deterministic mock response fixtures.*
 
 ---
 
-## Quickstart
-
-### Prerequisites
-- Python 3.10+
-- Node.js 18+ and npm
-- Google Gemini API Key ([Get API Key](https://aistudio.google.com/))
+## 🚀 Quickstart
 
 ### 1. Installation
 
 ```bash
-# Clone repository
+# 1. Clone repository
 git clone https://github.com/Reya-Doshi/Cortex.git
 cd Cortex
 
-# Set up environment file
+# 2. Configure environment file
 cp .env.example .env
 
-# Create virtual environment & install package with development tools
+# 3. Create virtual environment & install Cortex in editable mode
 python -m venv venv
 source venv/bin/activate  # On Windows: .\venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
@@ -82,7 +163,7 @@ pip install -e ".[dev]"
 # Terminal 1 — Launch Backend API Server (http://localhost:8000)
 cortex
 
-# Terminal 2 — Launch Frontend UI Workspace (http://localhost:5173)
+# Terminal 2 — Launch Frontend React Workspace (http://localhost:5173)
 cd frontend
 npm install
 npm run dev
@@ -90,68 +171,53 @@ npm run dev
 
 ---
 
-## How It Works
+## 🧪 Testing & Verification
 
-```mermaid
-graph TD
-    Client["React 18 UI Client"] -->|"HTTP POST /analyze"| Gateway["FastAPI Web Gateway"]
-    Gateway --> Profiler["Profiler Agent"]
-    Gateway --> Planner["Planner Agent (Gemini 2.5 Flash)"]
-    Planner -->|"Structured JSON DAG"| Executor["Tool Executor (ThreadPoolExecutor)"]
-    Executor -->|"Parallel Worker Threads"| Aggregators["Pandas Tool Registry"]
-    Aggregators --> Visualizer["Visualizer Agent"]
-    Visualizer --> Synthesizer["Analysis Synthesizer"]
-    Synthesizer --> Exporter["PDF Report Generator"]
-    Exporter -->|"Streamed Response"| Client
-```
-
-1. **Schema Check:** Dataset columns are verified against query intent to catch schema mismatches.
-2. **Plan Construction:** Gemini 2.5 Flash outputs a JSON DAG matching `ExecutionPlan` Pydantic schemas. (A local deterministic fallback is used if LLM calls fail).
-3. **Concurrent Execution:** Independent nodes execute in parallel worker threads while preserving dependency orders.
-
----
-
-## Testing & Verification
-
-Cortex includes an offline test suite featuring 22 deterministic unit and integration tests covering planner intent validation, DAG cycle detection, state isolation, and error fallbacks:
+Cortex features an offline test suite of 22 deterministic unit and integration tests:
 
 ```bash
 # Run backend test suite
 pytest
 
-# Run lint checks
+# Run code format and lint checks
 ruff check .
 ```
-See [docs/verification.md](docs/verification.md) for full test execution logs and audited claim details.
+
+For detailed test execution breakdown, empirical GIL benchmark measurements, and claim audit details, view [docs/verification.md](docs/verification.md).
 
 ---
 
-## Benchmarks & Performance Evaluation
+## 📂 Project Structure
 
-A benchmark script ([docs/benchmark.py](docs/benchmark.py)) measures wall-clock duration differences between sequential and `ThreadPoolExecutor` execution on identical synthetic datasets (20,000 rows, 7 DAG steps, 10 repetitions).
-
-- **Output Equivalence:** Verified 100% dictionary/data match between sequential and concurrent step outputs.
-- **Measured Timings (20,000 rows):**
-  - **Sequential Execution:** `61.17 ms` (Mean) | `61.19 ms` (p50)
-  - **Concurrent ThreadPool (4 Workers):** `77.94 ms` (Mean) | `70.79 ms` (p50)
-- **Empirical Analysis:** Pure CPU-bound Pandas transformations in Python incur Global Interpreter Lock (GIL) contention and thread-scheduling overhead when executed across thread pools (~16.7 ms overhead). In-process threading provides wall-clock speedups primarily when tool steps perform non-blocking I/O or network requests. Detailed methodology is recorded in [docs/verification.md](docs/verification.md).
+```
+Cortex/
+├── 📄 pyproject.toml                 # PEP 517/518/621 Packaging Specification
+├── 📁 backend/                       # FastAPI Backend Engine
+│   ├── 📄 agent.py                   # Orchestrator & Analysis Synthesizer
+│   ├── 📄 app.py                     # FastAPI REST API Endpoints & CLI Entrypoint
+│   ├── 📄 config.py                  # Environment & Shared Clients
+│   ├── 📄 dataset_manager.py         # CSV Upload & Namespaced Caching Engine
+│   ├── 📄 executor.py                # Concurrent ThreadPool DAG Scheduler
+│   ├── 📄 history_manager.py         # JSON History Persistence Storage
+│   ├── 📄 models.py                  # Pydantic Schemas & Data Contracts
+│   ├── 📄 planner.py                 # Gemini 2.5 Flash Structured DAG Planner
+│   ├── 📄 profiler.py                # Dataset Health & Profiling Tool
+│   ├── 📄 report_generator.py        # fpdf2 PDF Report Exporter
+│   ├── 📄 tools.py                   # Atomic Tool Registry
+│   ├── 📄 visualizer.py             # Recharts Visual Spec Generator
+│   └── 📁 tests/                     # Unit Tests Suite (22/22 Passing)
+├── 📁 docs/                          # Detailed Technical Documentation
+│   ├── 📄 architecture.md            # Deep-dive System Architecture
+│   ├── 📄 api.md                     # Complete REST API Documentation
+│   ├── 📄 verification.md            # Claim Audit & Empirical Benchmark Results
+│   └── 📄 benchmark.py               # Reproducible Benchmark Script
+├── 📁 frontend/                      # React 18 + Vite Frontend Workspace
+└── 📄 README.md                      # Project Overview & Guide
+```
 
 ---
 
-## Known Limitations & Roadmap
-
-### Known Limitations
-- **CPU-Bound Threading:** In-process Python thread pools are bounded by the GIL for pure Pandas memory operations.
-- **Predefined Tool Operations:** Dynamic analysis relies on a registry of predefined Pandas routines (`groupby_sex`, `monthly_sales_trend`, etc.) rather than an arbitrary Python sandbox container.
-
-### Realistic Roadmap
-- [ ] Asynchronous task queue (Celery/Redis) for out-of-process multi-core CPU scaling.
-- [ ] Docker container sandbox execution for arbitrary Python script evaluation.
-- [ ] Server-Sent Events (SSE) streaming for real-time frontend execution progress.
-
----
-
-## Authorship & License
+## 🛡️ License & Attribution
 
 - **Engineered By:** Reya Doshi
 - **License:** Distributed under the [MIT License](LICENSE).
