@@ -7,9 +7,9 @@ import uuid
 from typing import Any
 
 from backend.config import GEMINI_MODEL, client
+from backend.executor import executor
 from backend.models import DatasetProfile, ExecutionPlan, ExecutionResult
 from backend.planner import planner
-from backend.executor import executor
 from backend.tools import build_context_from_profile
 
 logger = logging.getLogger(__name__)

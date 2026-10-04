@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 
-from backend.config import client, GEMINI_MODEL
+from google.genai import types
+
+from backend.config import GEMINI_MODEL, client
 from backend.dataset_manager import dataset_manager
 from backend.models import ExecutionPlan, ToolStep
-from google.genai import types
 
 logger = logging.getLogger(__name__)
 
@@ -35,8 +35,10 @@ def validate_intent_columns(question: str, col_names: list[str]) -> None:
         survived_col = find_semantic_column(col_names, ["survived", "survival", "outcome", "survivor"])
         if not age_col or not survived_col:
             missing = []
-            if not age_col: missing.append("Age")
-            if not survived_col: missing.append("Survived")
+            if not age_col:
+                missing.append("Age")
+            if not survived_col:
+                missing.append("Survived")
             raise ValueError(f"Required columns {missing} for Age Group Survival analysis are missing from the dataset.")
 
     # 2. Survival by Sex
@@ -45,8 +47,10 @@ def validate_intent_columns(question: str, col_names: list[str]) -> None:
         survived_col = find_semantic_column(col_names, ["survived", "survival", "outcome", "survivor"])
         if not sex_col or not survived_col:
             missing = []
-            if not sex_col: missing.append("Sex/Gender")
-            if not survived_col: missing.append("Survived")
+            if not sex_col:
+                missing.append("Sex/Gender")
+            if not survived_col:
+                missing.append("Survived")
             raise ValueError(f"Required columns {missing} for Survival by Sex analysis are missing from the dataset.")
 
     # 3. Average Salary by Department
@@ -55,8 +59,10 @@ def validate_intent_columns(question: str, col_names: list[str]) -> None:
         dept_col = find_semantic_column(col_names, ["dept", "department", "division", "team"])
         if not salary_col or not dept_col:
             missing = []
-            if not salary_col: missing.append("Salary")
-            if not dept_col: missing.append("Department")
+            if not salary_col:
+                missing.append("Salary")
+            if not dept_col:
+                missing.append("Department")
             raise ValueError(f"Required columns {missing} for Average Salary by Department analysis are missing from the dataset.")
 
     # 4. Monthly Sales Trend
@@ -65,9 +71,12 @@ def validate_intent_columns(question: str, col_names: list[str]) -> None:
         date_col = find_semantic_column(col_names, ["date", "month", "time", "order_date", "timestamp"])
         if not sales_col or not date_col:
             missing = []
-            if not sales_col: missing.append("Sales")
-            if not date_col: missing.append("Date/Month")
+            if not sales_col:
+                missing.append("Sales")
+            if not date_col:
+                missing.append("Date/Month")
             raise ValueError(f"Required columns {missing} for Monthly Sales Trend analysis are missing from the dataset.")
+
 
 
 class PlannerAgent:

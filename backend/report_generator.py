@@ -5,9 +5,9 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 from fpdf import FPDF
+
 from backend.config import OUTPUTS_DIR
 from backend.history_manager import history_manager
 

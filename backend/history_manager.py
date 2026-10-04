@@ -6,7 +6,6 @@ import json
 import logging
 import uuid
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
 
 from backend.config import OUTPUTS_DIR
@@ -94,7 +93,7 @@ class HistoryManager:
         
         try:
             return json.loads(file_path.read_text(encoding="utf-8"))
-        except Exception as e:
+        except Exception:
             logger.exception("[History] Failed to load run %s", run_id)
             return None
 

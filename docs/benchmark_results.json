@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-10-04T09:27:31.142964+00:00",
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.14.6",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "cpu_count": 16,
+    "pandas_version": "3.0.6"
+  },
+  "benchmark_config": {
+    "dataset_rows": 20000,
+    "dag_steps_count": 7,
+    "worker_threads": 4,
+    "repetitions": 10,
+    "output_equivalent": true
+  },
+  "results": {
+    "sequential": {
+      "raw_timings_ms": [
+        56.5,
+        72.76,
+        60.71,
+        56.92,
+        61.67,
+        64.68,
+        62.86,
+        65.91,
+        56.75,
+        52.9
+      ],
+      "mean_ms": 61.17,
+      "p50_ms": 61.19,
+      "p95_ms": 69.68
+    },
+    "concurrent": {
+      "raw_timings_ms": [
+        70.16,
+        96.13,
+        68.81,
+        70.81,
+        75.29,
+        77.38,
+        118.47,
+        69.05,
+        62.53,
+        70.77
+      ],
+      "mean_ms": 77.94,
+      "p50_ms": 70.79,
+      "p95_ms": 108.42
+    },
+    "speedup_ratio_mean": 0.78,
+    "speedup_ratio_p50": 0.86
+  }
+}

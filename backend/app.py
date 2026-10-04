@@ -5,14 +5,14 @@ from __future__ import annotations
 import logging
 
 from fastapi import FastAPI, File, HTTPException, UploadFile, status
-from fastapi.responses import JSONResponse, FileResponse
-from backend.history_manager import history_manager
-from backend.report_generator import report_generator
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
 
 from backend import __version__
 from backend.agent import ask_agent
 from backend.config import ensure_directories, setup_logging
 from backend.dataset_manager import dataset_manager
+from backend.history_manager import history_manager
 from backend.models import (
     AnalysisRequest,
     AnalysisResponse,
@@ -22,12 +22,12 @@ from backend.models import (
     UploadResponse,
 )
 from backend.profiler import profiler
+from backend.report_generator import report_generator
 
 logger = logging.getLogger(__name__)
 
-from fastapi.middleware.cors import CORSMiddleware
-
 app = FastAPI(
+
     title="Cortex",
     description="Autonomous Multi-Agent Data Investigation Platform",
     version=__version__,
@@ -208,6 +208,7 @@ async def http_exception_handler(_request, exc: HTTPException) -> JSONResponse:
 def main() -> None:
     """CLI entrypoint to run the Cortex FastAPI backend server."""
     import os
+
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("backend.app:app", host="0.0.0.0", port=port, reload=True)

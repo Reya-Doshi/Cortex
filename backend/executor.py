@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import concurrent.futures
 import logging
 import time
-import concurrent.futures
 from datetime import datetime, timezone
 from typing import Any
 
@@ -72,7 +72,7 @@ class ToolExecutor:
                             tool=step.tool,
                             step_id=step.id,
                             success=False,
-                            error=f"Skipped because dependency failed.",
+                            error="Skipped because dependency failed.",
                             start_time=datetime.now(timezone.utc).isoformat(),
                             end_time=datetime.now(timezone.utc).isoformat(),
                             duration_ms=0.0

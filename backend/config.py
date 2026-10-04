@@ -41,7 +41,7 @@ def setup_logging(level: int = logging.INFO) -> None:
     )
 
 
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY not found in .env")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "MOCK_GEMINI_API_KEY")
 
 client = genai.Client(api_key=GEMINI_API_KEY)
+

@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import logging
 from typing import Any, Callable
+
 import pandas as pd
 
+from backend.dataset_manager import dataset_manager
 from backend.models import DatasetProfile
+from backend.planner import find_semantic_column
 from backend.profiler import profiler
 from backend.visualizer import visualizer
-from backend.dataset_manager import dataset_manager
-from backend.planner import find_semantic_column
 
 logger = logging.getLogger(__name__)
 
