@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/(health|upload|profile|analyze|history|report)(.*)",
+      "destination": "https://cortex-backend-li2t.onrender.com/$1$2"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
