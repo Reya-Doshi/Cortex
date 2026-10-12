@@ -42,12 +42,18 @@ app.add_middleware(
 )
 
 
+# Initialize runtime directories on module load for serverless environments (Vercel)
+setup_logging()
+ensure_directories()
+
+
 @app.on_event("startup")
 def on_startup() -> None:
     """Initialize runtime directories and logging."""
     setup_logging()
     ensure_directories()
     logger.info("Cortex backend started.")
+
 
 
 @app.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse, tags=["system"])
