@@ -12,6 +12,8 @@ from backend.config import OUTPUTS_DIR
 
 logger = logging.getLogger(__name__)
 
+HISTORY_DIR = OUTPUTS_DIR / "history"
+
 
 class HistoryManager:
     """Manages local JSON persistence for past data investigations."""
@@ -19,15 +21,10 @@ class HistoryManager:
     def __init__(self) -> None:
         self.ensure_history_dir()
 
-    @property
-    def history_dir(self) -> Path:
-        """Get the current history directory path."""
-        return OUTPUTS_DIR / "history"
-
-    def ensure_history_dir(self) -> None:
+    @staticmethod
+    def ensure_history_dir() -> None:
         """Create the history folder inside outputs/ if it doesn't exist."""
-        self.history_dir.mkdir(parents=True, exist_ok=True)
-
+        HISTORY_DIR.mkdir(parents=True, exist_ok=True)
 
     def save_run(
         self,
@@ -53,7 +50,7 @@ class HistoryManager:
             "answer": answer,
         }
         
-        destination = self.history_dir / f"{run_id}.json"
+        destination = HISTORY_DIR / f"{run_id}.json"
         
         try:
             destination.write_text(json.dumps(payload, indent=2), encoding="utf-8")
@@ -68,7 +65,7 @@ class HistoryManager:
         self.ensure_history_dir()
         runs = []
         
-        for file_path in self.history_dir.glob("*.json"):
+        for file_path in HISTORY_DIR.glob("*.json"):
             try:
                 data = json.loads(file_path.read_text(encoding="utf-8"))
                 runs.append({
@@ -89,7 +86,7 @@ class HistoryManager:
 
     def get_run(self, run_id: str) -> dict[str, Any] | None:
         """Load and return the complete payload for a specific run ID."""
-        file_path = self.history_dir / f"{run_id}.json"
+        file_path = HISTORY_DIR / f"{run_id}.json"
         if not file_path.exists():
             logger.warning("[History] Requested run ID %s not found.", run_id)
             return None

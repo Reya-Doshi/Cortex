@@ -16,21 +16,12 @@ load_dotenv(PROJECT_ROOT / ".env")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
-# On serverless platforms like Vercel, the filesystem is read-only except /tmp
-IS_VERCEL = bool(os.getenv("VERCEL"))
-
-if IS_VERCEL:
-    UPLOADS_DIR = Path("/tmp/uploads")
-    OUTPUTS_DIR = Path("/tmp/outputs")
-else:
-    UPLOADS_DIR = PROJECT_ROOT / "uploads"
-    OUTPUTS_DIR = PROJECT_ROOT / "outputs"
-
+UPLOADS_DIR = PROJECT_ROOT / "uploads"
+OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 DATASETS_DIR = PROJECT_ROOT / "datasets"
 
 # Maximum upload size in bytes (default: 50 MB).
 MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_BYTES", 50 * 1024 * 1024))
-
 
 ALLOWED_CSV_EXTENSIONS = {".csv"}
 

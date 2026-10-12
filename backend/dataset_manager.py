@@ -163,12 +163,8 @@ class DatasetManager:
             destination.unlink(missing_ok=True)
             raise
 
-        try:
-            relative_path = destination.relative_to(PROJECT_ROOT).as_posix()
-        except ValueError:
-            relative_path = destination.as_posix()
+        relative_path = destination.relative_to(PROJECT_ROOT).as_posix()
         self.load(destination)
-
 
         logger.info(
             "[Upload] Upload complete | file_id=%s rows=%d columns=%d",
